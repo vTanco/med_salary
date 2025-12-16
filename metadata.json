@@ -1,0 +1,5 @@
+{
+  "name": "MedSalary Madrid",
+  "description": "Calculadora salarial y registro de guardias para médicos en Madrid (MVP)",
+  "requestFramePermissions": []
+}
