@@ -7,6 +7,8 @@ final class Guardia {
     var fecha: Date
     var tipoRaw: String
     var horas: Int
+    var notas: String?
+    var hospital: String?
     
     var user: User?
     
@@ -15,11 +17,13 @@ final class Guardia {
         set { tipoRaw = newValue.rawValue }
     }
     
-    init(fecha: Date, tipo: TipoGuardia, horas: Int, user: User? = nil) {
+    init(fecha: Date, tipo: TipoGuardia, horas: Int, notas: String? = nil, hospital: String? = nil, user: User? = nil) {
         self.id = UUID()
         self.fecha = fecha
         self.tipoRaw = tipo.rawValue
         self.horas = horas
+        self.notas = notas
+        self.hospital = hospital
         self.user = user
     }
     
@@ -29,4 +33,13 @@ final class Guardia {
         formatter.locale = Locale(identifier: "es_ES")
         return formatter.string(from: fecha)
     }
+    
+    /// Check if same date already has a shift
+    static func existsOnDate(_ date: Date, for user: User) -> Bool {
+        let calendar = Calendar.current
+        return (user.guardias ?? []).contains { guardia in
+            calendar.isDate(guardia.fecha, inSameDayAs: date)
+        }
+    }
 }
+

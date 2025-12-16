@@ -10,7 +10,10 @@ struct AddShiftView: View {
     @State private var fecha = Date()
     @State private var tipoGuardia: TipoGuardia = .laborable
     @State private var horas: Int = 12
+    @State private var notas: String = ""
+    @State private var hospital: String = ""
     @State private var showConfirmation = false
+    @State private var showDuplicateWarning = false
     
     private let horasOptions = [6, 8, 10, 12, 14, 16, 17, 24]
     
@@ -45,7 +48,7 @@ struct AddShiftView: View {
                         .tint(.teal)
                     }
                     .padding()
-                    .background(.white)
+                    .background(Color(.systemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .shadow(color: .black.opacity(0.05), radius: 5)
                     
@@ -58,7 +61,10 @@ struct AddShiftView: View {
                         HStack(spacing: 12) {
                             ForEach(TipoGuardia.allCases, id: \.self) { tipo in
                                 Button {
-                                    tipoGuardia = tipo
+                                    withAnimation(.spring(response: 0.3)) {
+                                        tipoGuardia = tipo
+                                    }
+                                    triggerHaptic(.light)
                                 } label: {
                                     VStack(spacing: 8) {
                                         Image(systemName: tipo.icon)
@@ -72,12 +78,13 @@ struct AddShiftView: View {
                                     .background(tipoGuardia == tipo ? Color.teal : Color(.systemGray6))
                                     .foregroundStyle(tipoGuardia == tipo ? .white : .primary)
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    .scaleEffect(tipoGuardia == tipo ? 1.02 : 1.0)
                                 }
                             }
                         }
                     }
                     .padding()
-                    .background(.white)
+                    .background(Color(.systemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .shadow(color: .black.opacity(0.05), radius: 5)
                     
@@ -90,7 +97,10 @@ struct AddShiftView: View {
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 12) {
                             ForEach(horasOptions, id: \.self) { h in
                                 Button {
-                                    horas = h
+                                    withAnimation(.spring(response: 0.3)) {
+                                        horas = h
+                                    }
+                                    triggerHaptic(.light)
                                 } label: {
                                     Text("\(h)h")
                                         .font(.headline)
@@ -99,17 +109,47 @@ struct AddShiftView: View {
                                         .background(horas == h ? Color.teal : Color(.systemGray6))
                                         .foregroundStyle(horas == h ? .white : .primary)
                                         .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        .scaleEffect(horas == h ? 1.05 : 1.0)
                                 }
                             }
                         }
                     }
                     .padding()
-                    .background(.white)
+                    .background(Color(.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .shadow(color: .black.opacity(0.05), radius: 5)
+                    
+                    // Hospital (Optional)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("Hospital (opcional)", systemImage: "building.2.fill")
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                        
+                        TextField("Ej: Hospital La Paz", text: $hospital)
+                            .textFieldStyle(.roundedBorder)
+                    }
+                    .padding()
+                    .background(Color(.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .shadow(color: .black.opacity(0.05), radius: 5)
+                    
+                    // Notas (Optional)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("Notas (opcional)", systemImage: "note.text")
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                        
+                        TextField("Ej: Urgencias, turno tranquilo...", text: $notas, axis: .vertical)
+                            .textFieldStyle(.roundedBorder)
+                            .lineLimit(2...4)
+                    }
+                    .padding()
+                    .background(Color(.systemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .shadow(color: .black.opacity(0.05), radius: 5)
                     
                     // Save Button
-                    Button(action: saveGuardia) {
+                    Button(action: attemptSave) {
                         HStack {
                             Image(systemName: "checkmark.circle.fill")
                             Text("Guardar Guardia")
@@ -135,6 +175,24 @@ struct AddShiftView: View {
             } message: {
                 Text("La guardia se ha añadido correctamente.")
             }
+            .alert("Guardia Duplicada", isPresented: $showDuplicateWarning) {
+                Button("Cancelar", role: .cancel) { }
+                Button("Guardar Igualmente", role: .destructive) {
+                    saveGuardia()
+                }
+            } message: {
+                Text("Ya existe una guardia registrada para esta fecha. ¿Quieres añadir otra?")
+            }
+        }
+    }
+    
+    private func attemptSave() {
+        // Check for duplicate
+        if Guardia.existsOnDate(fecha, for: user) {
+            triggerHaptic(.warning)
+            showDuplicateWarning = true
+        } else {
+            saveGuardia()
         }
     }
     
@@ -143,6 +201,8 @@ struct AddShiftView: View {
             fecha: fecha,
             tipo: tipoGuardia,
             horas: horas,
+            notas: notas.isEmpty ? nil : notas,
+            hospital: hospital.isEmpty ? nil : hospital,
             user: user
         )
         
@@ -156,10 +216,22 @@ struct AddShiftView: View {
         
         do {
             try modelContext.save()
+            triggerHaptic(.success)
             showConfirmation = true
         } catch {
+            triggerHaptic(.error)
             print("Error saving guardia: \(error)")
         }
+    }
+    
+    private func triggerHaptic(_ type: UINotificationFeedbackGenerator.FeedbackType) {
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(type)
+    }
+    
+    private func triggerHaptic(_ style: UIImpactFeedbackGenerator.FeedbackStyle) {
+        let generator = UIImpactFeedbackGenerator(style: style)
+        generator.impactOccurred()
     }
 }
 
@@ -172,3 +244,4 @@ struct AddShiftView: View {
     return AddShiftView(user: user) { }
         .modelContainer(container)
 }
+

@@ -1,20 +1,81 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 💊 MedSalary
 
-# Run and deploy your AI Studio app
+**Calculadora de salarios para médicos en España**
 
-This contains everything you need to run your app locally.
+Aplicación iOS nativa que permite a médicos residentes (MIR) y especialistas calcular su salario neto mensual, registrar guardias y estimar retenciones de IRPF según su comunidad autónoma.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1hV0IHrbbwE8JbsNlP4XAClh6EmBhpURg
+## ✨ Características
 
-## Run Locally
+- 📊 **Dashboard de salario** - Visualiza tu neto estimado mensual en tiempo real
+- 🏥 **Registro de guardias** - Añade guardias laborables, festivas y nocturnas
+- 📍 **18 Comunidades Autónomas** - Datos salariales específicos por territorio
+- 💰 **Cálculo de IRPF** - Estimación automática según tramos 2024
+- 👨‍👩‍👧 **Situación familiar** - Ajuste de retenciones por hijos a cargo
+- 📱 **100% Offline** - Funciona sin conexión a internet
 
-**Prerequisites:**  Node.js
+## 🏗️ Tecnologías
 
+| Tecnología | Uso |
+|------------|-----|
+| **Swift 5.9+** | Lenguaje de programación |
+| **SwiftUI** | Interfaz de usuario declarativa |
+| **SwiftData** | Persistencia local (iOS 17+) |
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## 📋 Requisitos
+
+- **iOS 17.0** o superior
+- **Xcode 15** o superior
+- Mac con macOS Ventura o superior
+
+## 🚀 Instalación
+
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/tu-usuario/medsalary.git
+   ```
+
+2. Abre el proyecto en Xcode:
+   ```bash
+   open MedSalary.xcodeproj
+   ```
+
+3. Selecciona un simulador (iPhone 15 Pro recomendado)
+
+4. Ejecuta con **⌘R**
+
+## 📁 Estructura del Proyecto
+
+```
+MedSalary/
+├── MedSalaryApp.swift          # Entry point
+├── Assets.xcassets/            # Iconos y colores
+├── Models/
+│   ├── Enums.swift             # CategoriaId, TipoGuardia, etc.
+│   ├── User.swift              # Modelo de usuario
+│   ├── Guardia.swift           # Modelo de guardia
+│   └── PerfilUsuario.swift     # Configuración del usuario
+├── Data/
+│   └── SalaryData.swift        # Datos CCAA + tramos IRPF
+├── Services/
+│   ├── SalaryEngine.swift      # Motor de cálculo salarial
+│   └── IRPFEngine.swift        # Motor de cálculo IRPF
+└── Views/
+    ├── ContentView.swift       # Navegación principal
+    ├── Auth/                   # Login y Registro
+    ├── Onboarding/             # Configuración inicial
+    ├── Home/                   # Dashboard principal
+    ├── Shifts/                 # Añadir guardias
+    ├── History/                # Historial
+    └── Settings/               # Ajustes
+```
+
+## 👨‍⚕️ Categorías Soportadas
+
+- MIR-1 a MIR-5
+- Facultativo Especialista (FEA)
+- Médico de Familia (EAP)
+- Médico de Urgencias / SUMMA
+
+## 📄 Licencia
+
+MIT License - Ver [LICENSE](LICENSE) para más detalles.

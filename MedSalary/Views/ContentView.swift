@@ -90,11 +90,17 @@ struct MainTabView: View {
                 }
                 .tag(2)
             
+            ChartsView(user: user)
+                .tabItem {
+                    Label("Gráficas", systemImage: "chart.bar.fill")
+                }
+                .tag(3)
+            
             SettingsView(user: user, onLogout: onLogout)
                 .tabItem {
                     Label("Ajustes", systemImage: "gearshape.fill")
                 }
-                .tag(3)
+                .tag(4)
         }
         .tint(.teal)
     }

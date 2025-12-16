@@ -7,27 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A1000001 /* MedSalaryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000001; };
-		A1000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000002; };
-		A1000003 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000003; };
-		A1000004 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000004; };
-		A1000005 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000005; };
-		A1000006 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000006; };
-		A1000007 /* AddShiftView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000007; };
-		A1000008 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000008; };
-		A1000009 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000009; };
-		A1000010 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000010; };
-		A1000011 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000011; };
-		A1000012 /* Guardia.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000012; };
-		A1000013 /* PerfilUsuario.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000013; };
-		A1000014 /* SalaryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000014; };
-		A1000015 /* SalaryEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000015; };
-		A1000016 /* IRPFEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000016; };
-		A1000017 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000017; };
+		A1000001 /* MedSalaryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000001 /* MedSalaryApp.swift */; };
+		A1000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000002 /* ContentView.swift */; };
+		A1000003 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000003 /* LoginView.swift */; };
+		A1000004 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000004 /* RegisterView.swift */; };
+		A1000005 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000005 /* OnboardingView.swift */; };
+		A1000006 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000006 /* HomeView.swift */; };
+		A1000007 /* AddShiftView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000007 /* AddShiftView.swift */; };
+		A1000008 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000008 /* HistoryView.swift */; };
+		A1000009 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000009 /* SettingsView.swift */; };
+		A1000010 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000010 /* Enums.swift */; };
+		A1000011 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000011 /* User.swift */; };
+		A1000012 /* Guardia.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000012 /* Guardia.swift */; };
+		A1000013 /* PerfilUsuario.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000013 /* PerfilUsuario.swift */; };
+		A1000014 /* SalaryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000014 /* SalaryData.swift */; };
+		A1000015 /* SalaryEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000015 /* SalaryEngine.swift */; };
+		A1000016 /* IRPFEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000016 /* IRPFEngine.swift */; };
+		A1000017 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000017 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		C1000000 /* MedSalary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MedSalary.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1000001 /* MedSalaryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedSalaryApp.swift; sourceTree = "<group>"; };
 		B1000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B1000003 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
@@ -45,6 +44,7 @@
 		B1000015 /* SalaryEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SalaryEngine.swift; sourceTree = "<group>"; };
 		B1000016 /* IRPFEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IRPFEngine.swift; sourceTree = "<group>"; };
 		B1000017 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C1000000 /* MedSalary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MedSalary.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,14 +64,6 @@
 				E1000001 /* MedSalary */,
 				E1000099 /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		E1000099 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				C1000000 /* MedSalary.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		E1000001 /* MedSalary */ = {
@@ -178,6 +170,14 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
+		E1000099 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C1000000 /* MedSalary.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -206,7 +206,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 2610;
 				TargetAttributes = {
 					F1000000 = {
 						CreatedOnToolsVersion = 15.0;
@@ -304,6 +304,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 2FNUDT6JCA;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -327,6 +328,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -367,6 +369,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 2FNUDT6JCA;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -383,6 +386,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -449,20 +453,20 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		G1000001 /* Build configuration list for PBXProject "MedSalary" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				H1000001 /* Debug */,
-				H1000002 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		F1000003 /* Build configuration list for PBXNativeTarget "MedSalary" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				H1000003 /* Debug */,
 				H1000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		G1000001 /* Build configuration list for PBXProject "MedSalary" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				H1000001 /* Debug */,
+				H1000002 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

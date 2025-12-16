@@ -65,6 +65,9 @@ struct HomeView: View {
                 }
                 .padding()
             }
+            .refreshable {
+                calculateSalary()
+            }
             .background(Color(.systemGroupedBackground))
             .navigationBarHidden(true)
             .onAppear {
@@ -235,7 +238,7 @@ struct HomeView: View {
                     Text("Sueldo Base + Compl.")
                         .foregroundStyle(.secondary)
                     Spacer()
-                    Text(String(format: "%.2f €", salario?.brutoFijoMensual ?? 0))
+                    Text(formatCurrency(salario?.brutoFijoMensual ?? 0))
                 }
                 .font(.subheadline)
                 
@@ -244,7 +247,7 @@ struct HomeView: View {
                         .fontWeight(.medium)
                         .foregroundStyle(.teal)
                     Spacer()
-                    Text(String(format: "+%.2f €", salario?.brutoGuardias ?? 0))
+                    Text("+" + formatCurrency(salario?.brutoGuardias ?? 0))
                         .fontWeight(.medium)
                         .foregroundStyle(.teal)
                 }
@@ -259,7 +262,7 @@ struct HomeView: View {
                     Text("Total Bruto")
                         .fontWeight(.bold)
                     Spacer()
-                    Text(String(format: "%.2f €", salario?.brutoTotalMensual ?? 0))
+                    Text(formatCurrency(salario?.brutoTotalMensual ?? 0))
                         .fontWeight(.bold)
                 }
             }
@@ -289,6 +292,10 @@ struct HomeView: View {
                 estadoFamiliar: perfil.estadoFamiliar
             )
         }
+    }
+    
+    private func formatCurrency(_ value: Double) -> String {
+        return String(format: "%.2f €", value)
     }
 }
 

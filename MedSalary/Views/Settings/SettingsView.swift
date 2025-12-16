@@ -91,6 +91,21 @@ struct SettingsView: View {
                     }
                 }
                 
+                // Tools Section
+                Section("Herramientas") {
+                    NavigationLink {
+                        CCAAComparatorView(user: user)
+                    } label: {
+                        Label("Comparador CCAA", systemImage: "chart.bar.doc.horizontal")
+                    }
+                    
+                    NavigationLink {
+                        AnnualProjectionView(user: user)
+                    } label: {
+                        Label("Proyección Anual", systemImage: "calendar.badge.clock")
+                    }
+                }
+                
                 // Danger Zone
                 Section {
                     Button(role: .destructive) {

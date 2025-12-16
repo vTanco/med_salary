@@ -17,6 +17,11 @@ struct MedSalaryApp: App {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
+    
+    init() {
+        // Seed demo user on first launch
+        seedDemoUserIfNeeded()
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -24,4 +29,44 @@ struct MedSalaryApp: App {
         }
         .modelContainer(sharedModelContainer)
     }
+    
+    private func seedDemoUserIfNeeded() {
+        let context = sharedModelContainer.mainContext
+        
+        // Check if demo user already exists
+        let descriptor = FetchDescriptor<User>(
+            predicate: #Predicate { $0.email == "vicente.tanco@edu.uah.es" }
+        )
+        
+        do {
+            let existingUsers = try context.fetch(descriptor)
+            if existingUsers.isEmpty {
+                // Create demo user
+                let demoUser = User(
+                    email: "vicente.tanco@edu.uah.es",
+                    name: "Vicente Tanco",
+                    password: "admin123"
+                )
+                
+                // Create profile for demo user
+                let perfil = PerfilUsuario(
+                    ccaa: .madrid,
+                    categoria: .mir3,
+                    estadoFamiliar: .general,
+                    user: demoUser
+                )
+                perfil.onboardingCompleto = true
+                demoUser.perfil = perfil
+                
+                context.insert(demoUser)
+                context.insert(perfil)
+                
+                try context.save()
+                print("✅ Demo user created: vicente.tanco@edu.uah.es")
+            }
+        } catch {
+            print("Error seeding demo user: \(error)")
+        }
+    }
 }
+

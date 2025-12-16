@@ -6,6 +6,9 @@ struct HistoryView: View {
     
     let user: User
     
+    @State private var guardiaToDelete: Guardia?
+    @State private var showDeleteConfirmation = false
+    
     private var guardias: [Guardia] {
         (user.guardias ?? []).sorted { $0.fecha > $1.fecha }
     }
@@ -32,9 +35,14 @@ struct HistoryView: View {
                             Section(header: Text(month)) {
                                 ForEach(monthGuardias, id: \.id) { guardia in
                                     guardiaRow(guardia)
-                                }
-                                .onDelete { indexSet in
-                                    deleteGuardias(at: indexSet, from: monthGuardias)
+                                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                            Button(role: .destructive) {
+                                                guardiaToDelete = guardia
+                                                showDeleteConfirmation = true
+                                            } label: {
+                                                Label("Eliminar", systemImage: "trash")
+                                            }
+                                        }
                                 }
                             }
                         }
@@ -43,6 +51,20 @@ struct HistoryView: View {
                 }
             }
             .navigationTitle("Historial")
+            .alert("Eliminar Guardia", isPresented: $showDeleteConfirmation) {
+                Button("Cancelar", role: .cancel) {
+                    guardiaToDelete = nil
+                }
+                Button("Eliminar", role: .destructive) {
+                    if let guardia = guardiaToDelete {
+                        deleteGuardia(guardia)
+                    }
+                }
+            } message: {
+                if let guardia = guardiaToDelete {
+                    Text("¿Eliminar la guardia del \(guardia.fechaFormateada)?")
+                }
+            }
         }
     }
     
@@ -76,12 +98,34 @@ struct HistoryView: View {
             
             // Info
             VStack(alignment: .leading, spacing: 4) {
-                Text(guardia.fechaFormateada)
-                    .font(.headline)
+                HStack {
+                    Text(guardia.fechaFormateada)
+                        .font(.headline)
+                    
+                    if guardia.hospital != nil {
+                        Image(systemName: "building.2.fill")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
                 
                 Text("\(guardia.tipo.displayName) • \(guardia.horas)h")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+                
+                // Show hospital and notes
+                if let hospital = guardia.hospital, !hospital.isEmpty {
+                    Text(hospital)
+                        .font(.caption)
+                        .foregroundStyle(.teal)
+                }
+                
+                if let notas = guardia.notas, !notas.isEmpty {
+                    Text(notas)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
             }
             
             Spacer()
@@ -106,22 +150,24 @@ struct HistoryView: View {
         }
     }
     
-    private func deleteGuardias(at offsets: IndexSet, from monthGuardias: [Guardia]) {
-        for index in offsets {
-            let guardia = monthGuardias[index]
-            
-            // Remove from user's guardias array
-            user.guardias?.removeAll { $0.id == guardia.id }
-            
-            // Delete from context
-            modelContext.delete(guardia)
-        }
+    private func deleteGuardia(_ guardia: Guardia) {
+        // Haptic feedback
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.success)
+        
+        // Remove from user's guardias array
+        user.guardias?.removeAll { $0.id == guardia.id }
+        
+        // Delete from context
+        modelContext.delete(guardia)
         
         do {
             try modelContext.save()
         } catch {
             print("Error deleting guardia: \(error)")
         }
+        
+        guardiaToDelete = nil
     }
 }
 
@@ -135,7 +181,7 @@ struct HistoryView: View {
     user.perfil = perfil
     
     // Add some sample guardias
-    let g1 = Guardia(fecha: Date(), tipo: .laborable, horas: 12, user: user)
+    let g1 = Guardia(fecha: Date(), tipo: .laborable, horas: 12, notas: "Turno tranquilo", hospital: "Hospital La Paz", user: user)
     let g2 = Guardia(fecha: Date().addingTimeInterval(-86400), tipo: .noche, horas: 17, user: user)
     user.guardias = [g1, g2]
     
@@ -144,3 +190,4 @@ struct HistoryView: View {
     return HistoryView(user: user)
         .modelContainer(container)
 }
+
