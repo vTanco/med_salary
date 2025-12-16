@@ -162,7 +162,7 @@ struct ProjectionRow: View {
                 .fontWeight(isBold ? .semibold : .regular)
             Spacer()
             Text("\(isPositive ? "" : "-")\(Int(abs(value)))€")
-                .foregroundStyle(isPositive ? .primary : .red)
+                .foregroundColor(isPositive ? .primary : .red)
                 .fontWeight(isBold ? .semibold : .regular)
         }
     }
