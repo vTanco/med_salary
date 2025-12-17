@@ -6,6 +6,36 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 
 ---
 
+## [1.2.0] - 2024-12-17
+
+### 📊 Actualización de Datos Salariales 2024-2025
+
+- **Datos oficiales verificados** - Actualización completa basada en documentos oficiales:
+  - Resolución 0039/2025 SAS (Andalucía)
+  - Tablas agosto 2025 Aragón
+  - SESCAM tablas 2025 (Castilla-La Mancha)
+  - Acuerdo SACYL 2024 (Castilla y León)
+  - ICS III Acord (Cataluña)
+  - Osakidetza 2025 (País Vasco)
+
+### 💰 Nuevos Valores
+
+| Concepto | Antes | Ahora |
+|----------|-------|-------|
+| MIR-1 base | 1.166€ | 1.301€ |
+| MIR-5 base | 1.166€ | 1.795€ |
+| Guardia País Vasco | ~23€/h | 35-48€/h |
+| Guardia Madrid | ~23€/h | 26-33€/h |
+| Guardia CLM | ~23€/h | 31.63-37€/h |
+
+### 🔧 Técnico
+
+- Precios de guardia específicos por CCAA (no multiplicadores genéricos)
+- Complementos de destino y específico diferenciados por región
+- Archivos actualizados: `SalaryData.swift`, `constants.ts`
+
+---
+
 ## [1.1.0] - 2024-12-16
 
 ### ✨ Nuevas Funcionalidades

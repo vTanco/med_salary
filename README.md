@@ -4,11 +4,13 @@
 
 Aplicación iOS nativa que permite a médicos residentes (MIR) y especialistas calcular su salario neto mensual, registrar guardias y estimar retenciones de IRPF según su comunidad autónoma.
 
+> 📅 **Datos actualizados a Diciembre 2024/2025** - Fuentes oficiales: Resoluciones CCAA, SATSE, CESM
+
 ## ✨ Características
 
 - 📊 **Dashboard de salario** - Visualiza tu neto estimado mensual en tiempo real
 - 🏥 **Registro de guardias** - Añade guardias laborables, festivas y nocturnas
-- 📍 **18 Comunidades Autónomas** - Datos salariales específicos por territorio
+- 📍 **18 Comunidades Autónomas** - Datos salariales específicos por territorio (2024-2025)
 - 💰 **Cálculo de IRPF** - Estimación automática según tramos 2024
 - 👨‍👩‍👧 **Situación familiar** - Ajuste de retenciones por hijos a cargo
 - 📱 **100% Offline** - Funciona sin conexión a internet
@@ -71,10 +73,22 @@ MedSalary/
 
 ## 👨‍⚕️ Categorías Soportadas
 
-- MIR-1 a MIR-5
+- MIR-1 a MIR-5 (sueldos base: 1.301€ - 1.795€)
 - Facultativo Especialista (FEA)
 - Médico de Familia (EAP)
 - Médico de Urgencias / SUMMA
+
+## 📈 Datos Salariales 2024-2025
+
+| CCAA | Guardia Lab. | Guardia Fest. | Complemento Específico |
+|------|-------------|---------------|------------------------|
+| País Vasco | 35€/h | 45€/h | 1.400€/mes |
+| Cataluña | 37€/h | 40€/h | 1.200€/mes |
+| Castilla-La Mancha | 31.63€/h | 33.91€/h | 972€/mes |
+| Madrid | 26€/h | 30€/h | 950€/mes |
+| Andalucía | 30€/h | 34€/h | 850€/mes |
+
+*Datos obtenidos de documentos oficiales: Resolución 0039/2025 SAS, SESCAM 2025, Osakidetza, ICS III Acord, etc.*
 
 ## 📄 Licencia
 

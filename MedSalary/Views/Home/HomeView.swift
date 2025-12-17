@@ -282,7 +282,8 @@ struct HomeView: View {
             ccaa: perfil.ccaa,
             categoria: perfil.categoria,
             guardiasMes: guardiasMes,
-            guardiasAnio: guardiasAnio
+            guardiasAnio: guardiasAnio,
+            perfil: perfil
         )
         
         if let salario = salario {

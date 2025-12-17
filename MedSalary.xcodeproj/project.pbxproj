@@ -27,6 +27,9 @@
 		A1000018 /* ChartsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000018 /* ChartsView.swift */; };
 		A1000019 /* CCAAComparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000019 /* CCAAComparatorView.swift */; };
 		A1000020 /* AnnualProjectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000020 /* AnnualProjectionView.swift */; };
+
+		A1000022 /* ComplementosConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000022 /* ComplementosConfigView.swift */; };
+
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +53,9 @@
 		B1000018 /* ChartsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartsView.swift; sourceTree = "<group>"; };
 		B1000019 /* CCAAComparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCAAComparatorView.swift; sourceTree = "<group>"; };
 		B1000020 /* AnnualProjectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnualProjectionView.swift; sourceTree = "<group>"; };
+
+		B1000022 /* ComplementosConfigView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplementosConfigView.swift; sourceTree = "<group>"; };
+
 		C1000000 /* MedSalary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MedSalary.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -109,6 +115,7 @@
 			children = (
 				B1000015 /* SalaryEngine.swift */,
 				B1000016 /* IRPFEngine.swift */,
+
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -143,6 +150,7 @@
 			isa = PBXGroup;
 			children = (
 				B1000005 /* OnboardingView.swift */,
+
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -175,6 +183,7 @@
 			isa = PBXGroup;
 			children = (
 				B1000009 /* SettingsView.swift */,
+				B1000022 /* ComplementosConfigView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -299,6 +308,9 @@
 				A1000018 /* ChartsView.swift in Sources */,
 				A1000019 /* CCAAComparatorView.swift in Sources */,
 				A1000020 /* AnnualProjectionView.swift in Sources */,
+
+				A1000022 /* ComplementosConfigView.swift in Sources */,
+
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

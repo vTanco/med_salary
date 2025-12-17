@@ -26,7 +26,8 @@ struct AnnualProjectionView: View {
             ccaa: perfil.ccaa,
             categoria: perfil.categoria,
             guardiasMes: guardiasAnio, // Using annual for projection
-            guardiasAnio: guardiasAnio
+            guardiasAnio: guardiasAnio,
+            perfil: perfil
         )
         
         let irpfResult = IRPFEngine.calcularIRPF(

@@ -71,6 +71,17 @@ struct SettingsView: View {
                                     .foregroundStyle(.secondary)
                             }
                         }
+                        
+                        NavigationLink {
+                            ComplementosConfigView(perfil: perfil)
+                        } label: {
+                            HStack {
+                                Label("Mis Complementos", systemImage: "eurosign.circle.fill")
+                                Spacer()
+                                Text(perfil.usarComplementosPersonalizados ? "Personalizado" : "Por defecto")
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
                     }
                 }
                 

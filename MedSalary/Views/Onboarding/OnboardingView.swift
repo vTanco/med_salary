@@ -12,12 +12,14 @@ struct OnboardingView: View {
     @State private var selectedCategoria: CategoriaId = .mir1
     @State private var selectedEstadoFamiliar: EstadoFamiliar = .general
     
+    private let totalSteps = 3 // CCAA, Categoria, Familiar
+    
     var body: some View {
         NavigationStack {
             VStack(spacing: 24) {
                 // Progress
                 HStack(spacing: 8) {
-                    ForEach(0..<3) { step in
+                    ForEach(0..<3, id: \.self) { step in
                         Capsule()
                             .fill(step <= currentStep ? Color.teal : Color.gray.opacity(0.3))
                             .frame(height: 4)
@@ -55,21 +57,29 @@ struct OnboardingView: View {
                     
                     Spacer()
                     
-                    Button(currentStep == 2 ? "Finalizar" : "Siguiente") {
-                        if currentStep == 2 {
-                            completeOnboarding()
-                        } else {
+                    if currentStep < totalSteps - 1 {
+                        Button("Siguiente") {
                             withAnimation {
                                 currentStep += 1
                             }
                         }
+                        .fontWeight(.semibold)
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 14)
+                        .background(.teal)
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    } else {
+                        Button("Finalizar") {
+                            completeOnboarding()
+                        }
+                        .fontWeight(.semibold)
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 14)
+                        .background(.teal)
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
-                    .fontWeight(.semibold)
-                    .padding(.horizontal, 32)
-                    .padding(.vertical, 14)
-                    .background(.teal)
-                    .foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 32)
@@ -178,6 +188,11 @@ struct OnboardingView: View {
     // MARK: - Actions
     
     private func completeOnboarding() {
+        let _ = createPerfil()
+        onComplete()
+    }
+    
+    private func createPerfil() -> PerfilUsuario {
         let perfil = PerfilUsuario(
             ccaa: selectedCCAA,
             categoria: selectedCategoria,
@@ -191,10 +206,11 @@ struct OnboardingView: View {
         
         do {
             try modelContext.save()
-            onComplete()
         } catch {
             print("Error saving perfil: \(error)")
         }
+        
+        return perfil
     }
 }
 

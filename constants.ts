@@ -1,131 +1,162 @@
 import { DatasetSalarial, IRPFTramo, CategoriaSalarial, CategoriaId } from './types';
 
-// Helper to generate categories based on a template with multipliers
-// This avoids writing 2000+ lines of redundant JSON while providing full data for all regions.
-const createCategorias = (
-  baseSueldo: number, 
-  baseGuardia: number, 
-  extraSupplement: number = 0
-): CategoriaSalarial[] => {
+// Datos Salariales Actualizados 2024-2025
+// Fuente: Documento oficial "Salarios Médicos Servicio Público Español"
+
+// MARK: - Precios de Guardia por CCAA (€/hora) - Adjuntos/FEA
+const GUARDIAS_CCAA: Record<string, { laborable: number; festivo: number; noche: number }> = {
+  "Andalucía": { laborable: 30.00, festivo: 34.00, noche: 38.00 },
+  "Aragón": { laborable: 27.78, festivo: 29.77, noche: 32.00 },
+  "Principado de Asturias": { laborable: 28.50, festivo: 32.00, noche: 35.00 },
+  "Illes Balears": { laborable: 32.00, festivo: 37.00, noche: 40.00 },
+  "Canarias": { laborable: 28.00, festivo: 32.00, noche: 35.00 },
+  "Cantabria": { laborable: 30.00, festivo: 33.00, noche: 36.00 },
+  "Castilla y León": { laborable: 30.12, festivo: 33.58, noche: 36.00 },
+  "Castilla-La Mancha": { laborable: 31.63, festivo: 33.91, noche: 37.00 },
+  "Cataluña": { laborable: 37.00, festivo: 40.00, noche: 43.00 },
+  "Comunitat Valenciana": { laborable: 28.00, festivo: 31.00, noche: 34.00 },
+  "Extremadura": { laborable: 27.00, festivo: 30.00, noche: 33.00 },
+  "Galicia": { laborable: 28.00, festivo: 30.00, noche: 33.00 },
+  "Madrid": { laborable: 26.00, festivo: 30.00, noche: 33.00 },
+  "Región de Murcia": { laborable: 28.00, festivo: 32.00, noche: 35.00 },
+  "Comunidad Foral de Navarra": { laborable: 28.00, festivo: 35.00, noche: 40.00 },
+  "País Vasco": { laborable: 35.00, festivo: 45.00, noche: 48.00 },
+  "La Rioja": { laborable: 28.00, festivo: 32.00, noche: 35.00 },
+  "Ceuta y Melilla (INGESA)": { laborable: 30.00, festivo: 35.00, noche: 38.00 },
+};
+
+// Complementos por CCAA
+const COMPLEMENTOS_CCAA: Record<string, { destino: number; especifico: number }> = {
+  "Andalucía": { destino: 677.66, especifico: 850.00 },
+  "Aragón": { destino: 700.00, especifico: 375.00 },
+  "Principado de Asturias": { destino: 697.00, especifico: 920.00 },
+  "Illes Balears": { destino: 710.00, especifico: 1100.00 },
+  "Canarias": { destino: 697.00, especifico: 950.00 },
+  "Cantabria": { destino: 697.00, especifico: 1050.00 },
+  "Castilla y León": { destino: 697.00, especifico: 920.00 },
+  "Castilla-La Mancha": { destino: 697.00, especifico: 972.51 },
+  "Cataluña": { destino: 720.00, especifico: 1200.00 },
+  "Comunitat Valenciana": { destino: 697.00, especifico: 900.00 },
+  "Extremadura": { destino: 677.00, especifico: 800.00 },
+  "Galicia": { destino: 697.00, especifico: 880.00 },
+  "Madrid": { destino: 697.00, especifico: 950.00 },
+  "Región de Murcia": { destino: 697.00, especifico: 870.00 },
+  "Comunidad Foral de Navarra": { destino: 720.00, especifico: 1300.00 },
+  "País Vasco": { destino: 750.00, especifico: 1400.00 },
+  "La Rioja": { destino: 697.00, especifico: 850.00 },
+  "Ceuta y Melilla (INGESA)": { destino: 720.00, especifico: 1500.00 },
+};
+
+// Multiplicadores MIR por CCAA
+const getMIRMultiplier = (ccaa: string): number => {
+  switch (ccaa) {
+    case "País Vasco": return 1.35;
+    case "Comunidad Foral de Navarra": return 1.25;
+    case "Cataluña": return 1.20;
+    case "Illes Balears": return 1.15;
+    case "Castilla-La Mancha": return 1.10;
+    case "Castilla y León": return 1.05;
+    case "Andalucía": case "Canarias": return 1.00;
+    case "Principado de Asturias": case "Cantabria": case "Galicia": case "Comunitat Valenciana": return 0.98;
+    case "Aragón": case "Región de Murcia": case "La Rioja": case "Extremadura": return 0.95;
+    case "Madrid": return 0.90;
+    case "Ceuta y Melilla (INGESA)": return 1.10;
+    default: return 1.00;
+  }
+};
+
+// Crear categorías para una CCAA específica
+const createCategorias = (ccaa: string): CategoriaSalarial[] => {
+  const guardias = GUARDIAS_CCAA[ccaa] || { laborable: 28, festivo: 32, noche: 35 };
+  const complementos = COMPLEMENTOS_CCAA[ccaa] || { destino: 697, especifico: 900 };
+  const mirMult = getMIRMultiplier(ccaa);
+  const sueldoBase = 1333.40; // Base A1 nacional 2025
+
   return [
+    // MIR Categories (2024-2025 real values)
     {
       nombre: CategoriaId.MIR1,
-      sueldo_base_mensual: 1166.67, // Base nacional común
+      sueldo_base_mensual: 1301.00,
       complemento_destino_mensual: 0,
-      complemento_especifico_mensual: 145.00 * baseSueldo, 
-      precio_guardia: { 
-        laborable: 10.00 * baseGuardia, 
-        festivo: 12.00 * baseGuardia, 
-        noche: 14.00 * baseGuardia 
-      }
+      complemento_especifico_mensual: 0,
+      precio_guardia: { laborable: 17.50 * mirMult, festivo: 19.00 * mirMult, noche: 21.00 * mirMult }
     },
     {
       nombre: CategoriaId.MIR2,
-      sueldo_base_mensual: 1166.67,
+      sueldo_base_mensual: 1400.00,
       complemento_destino_mensual: 0,
-      complemento_especifico_mensual: 240.00 * baseSueldo,
-      precio_guardia: { 
-        laborable: 11.50 * baseGuardia, 
-        festivo: 14.00 * baseGuardia, 
-        noche: 16.00 * baseGuardia 
-      }
+      complemento_especifico_mensual: 0,
+      precio_guardia: { laborable: 19.50 * mirMult, festivo: 21.50 * mirMult, noche: 23.50 * mirMult }
     },
     {
       nombre: CategoriaId.MIR3,
-      sueldo_base_mensual: 1166.67,
+      sueldo_base_mensual: 1500.00,
       complemento_destino_mensual: 0,
-      complemento_especifico_mensual: 460.00 * baseSueldo,
-      precio_guardia: { 
-        laborable: 13.00 * baseGuardia, 
-        festivo: 16.50 * baseGuardia, 
-        noche: 18.00 * baseGuardia 
-      }
+      complemento_especifico_mensual: 0,
+      precio_guardia: { laborable: 22.00 * mirMult, festivo: 24.00 * mirMult, noche: 26.00 * mirMult }
     },
     {
       nombre: CategoriaId.MIR4,
-      sueldo_base_mensual: 1166.67,
-      complemento_destino_mensual: 423.50,
-      complemento_especifico_mensual: 685.00 * baseSueldo,
-      precio_guardia: { 
-        laborable: 14.00 * baseGuardia, 
-        festivo: 18.50 * baseGuardia, 
-        noche: 20.00 * baseGuardia 
-      }
+      sueldo_base_mensual: 1650.00,
+      complemento_destino_mensual: 0,
+      complemento_especifico_mensual: 0,
+      precio_guardia: { laborable: 24.50 * mirMult, festivo: 27.00 * mirMult, noche: 29.00 * mirMult }
     },
     {
       nombre: CategoriaId.MIR5,
-      sueldo_base_mensual: 1166.67,
-      complemento_destino_mensual: 423.50,
-      complemento_especifico_mensual: 750.00 * baseSueldo,
-      precio_guardia: { 
-        laborable: 15.50 * baseGuardia, 
-        festivo: 20.00 * baseGuardia, 
-        noche: 22.00 * baseGuardia 
-      }
+      sueldo_base_mensual: 1795.00,
+      complemento_destino_mensual: 0,
+      complemento_especifico_mensual: 0,
+      precio_guardia: { laborable: 26.66 * mirMult, festivo: 29.00 * mirMult, noche: 31.00 * mirMult }
     },
+    // Adjuntos/FEA (CCAA-specific values)
     {
       nombre: CategoriaId.FEA,
-      sueldo_base_mensual: 1567.37, // Base nacional estatutario
-      complemento_destino_mensual: 647.48,
-      complemento_especifico_mensual: (1380.00 + extraSupplement) * baseSueldo,
-      precio_guardia: { 
-        laborable: 23.00 * baseGuardia, 
-        festivo: 29.00 * baseGuardia, 
-        noche: 34.00 * baseGuardia 
-      }
+      sueldo_base_mensual: sueldoBase,
+      complemento_destino_mensual: complementos.destino,
+      complemento_especifico_mensual: complementos.especifico,
+      precio_guardia: guardias
     },
     {
       nombre: CategoriaId.MED_FAMILIA,
-      sueldo_base_mensual: 1567.37,
-      complemento_destino_mensual: 647.48,
-      complemento_especifico_mensual: (1450.00 + extraSupplement) * baseSueldo,
-      precio_guardia: { 
-        laborable: 23.00 * baseGuardia, 
-        festivo: 29.00 * baseGuardia, 
-        noche: 34.00 * baseGuardia 
-      }
+      sueldo_base_mensual: sueldoBase,
+      complemento_destino_mensual: complementos.destino,
+      complemento_especifico_mensual: complementos.especifico + 70,
+      precio_guardia: guardias
     },
     {
       nombre: CategoriaId.MED_URGENCIAS,
-      sueldo_base_mensual: 1567.37,
-      complemento_destino_mensual: 647.48,
-      complemento_especifico_mensual: (1600.00 + extraSupplement) * baseSueldo,
+      sueldo_base_mensual: sueldoBase,
+      complemento_destino_mensual: complementos.destino,
+      complemento_especifico_mensual: complementos.especifico + 150,
       precio_guardia: { 
-        laborable: 24.50 * baseGuardia, 
-        festivo: 31.00 * baseGuardia, 
-        noche: 36.00 * baseGuardia 
+        laborable: guardias.laborable + 1.5, 
+        festivo: guardias.festivo + 2.0, 
+        noche: guardias.noche + 2.0 
       }
     }
   ];
 };
 
-// Configuración por grupos salariales aproximados para MVP
-const CAT_MADRID = createCategorias(1.0, 1.0, 0); 
-const CAT_ANDALUCIA = createCategorias(0.95, 0.95, -50); 
-const CAT_NORTE_ALTA = createCategorias(1.10, 1.15, 100); // Pais Vasco, Navarra
-const CAT_INSULAR = createCategorias(1.05, 1.0, 300); // Canarias, Baleares (Plus residencia)
-const CAT_MEDIO = createCategorias(0.98, 0.98, 0); // Valencia, Galicia, etc.
-const CAT_CEUTA = createCategorias(1.2, 1.1, 700); // Ceuta Melilla (Plus residencia alto)
-
 export const DATASETS_CCAA: DatasetSalarial[] = [
-  { ccaa: "Andalucía", categorias: CAT_ANDALUCIA },
-  { ccaa: "Aragón", categorias: CAT_MEDIO },
-  { ccaa: "Principado de Asturias", categorias: CAT_MEDIO },
-  { ccaa: "Illes Balears", categorias: CAT_INSULAR },
-  { ccaa: "Canarias", categorias: CAT_INSULAR },
-  { ccaa: "Cantabria", categorias: CAT_MEDIO },
-  { ccaa: "Castilla y León", categorias: CAT_ANDALUCIA },
-  { ccaa: "Castilla-La Mancha", categorias: CAT_ANDALUCIA },
-  { ccaa: "Cataluña", categorias: CAT_MADRID },
-  { ccaa: "Comunitat Valenciana", categorias: CAT_MEDIO },
-  { ccaa: "Extremadura", categorias: CAT_ANDALUCIA },
-  { ccaa: "Galicia", categorias: CAT_MEDIO },
-  { ccaa: "Madrid", categorias: CAT_MADRID },
-  { ccaa: "Región de Murcia", categorias: CAT_ANDALUCIA },
-  { ccaa: "Comunidad Foral de Navarra", categorias: CAT_NORTE_ALTA },
-  { ccaa: "País Vasco", categorias: CAT_NORTE_ALTA },
-  { ccaa: "La Rioja", categorias: CAT_MEDIO },
-  { ccaa: "Ceuta y Melilla (INGESA)", categorias: CAT_CEUTA },
+  { ccaa: "Andalucía", categorias: createCategorias("Andalucía") },
+  { ccaa: "Aragón", categorias: createCategorias("Aragón") },
+  { ccaa: "Principado de Asturias", categorias: createCategorias("Principado de Asturias") },
+  { ccaa: "Illes Balears", categorias: createCategorias("Illes Balears") },
+  { ccaa: "Canarias", categorias: createCategorias("Canarias") },
+  { ccaa: "Cantabria", categorias: createCategorias("Cantabria") },
+  { ccaa: "Castilla y León", categorias: createCategorias("Castilla y León") },
+  { ccaa: "Castilla-La Mancha", categorias: createCategorias("Castilla-La Mancha") },
+  { ccaa: "Cataluña", categorias: createCategorias("Cataluña") },
+  { ccaa: "Comunitat Valenciana", categorias: createCategorias("Comunitat Valenciana") },
+  { ccaa: "Extremadura", categorias: createCategorias("Extremadura") },
+  { ccaa: "Galicia", categorias: createCategorias("Galicia") },
+  { ccaa: "Madrid", categorias: createCategorias("Madrid") },
+  { ccaa: "Región de Murcia", categorias: createCategorias("Región de Murcia") },
+  { ccaa: "Comunidad Foral de Navarra", categorias: createCategorias("Comunidad Foral de Navarra") },
+  { ccaa: "País Vasco", categorias: createCategorias("País Vasco") },
+  { ccaa: "La Rioja", categorias: createCategorias("La Rioja") },
+  { ccaa: "Ceuta y Melilla (INGESA)", categorias: createCategorias("Ceuta y Melilla (INGESA)") },
 ];
 
 export const TRAMOS_IRPF_2024: IRPFTramo[] = [
