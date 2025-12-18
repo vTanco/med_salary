@@ -152,6 +152,12 @@ struct SettingsView: View {
                 // Tools Section
                 Section("Herramientas") {
                     NavigationLink {
+                        PlantillasView(user: user)
+                    } label: {
+                        Label("Plantillas de Guardia", systemImage: "doc.on.doc")
+                    }
+                    
+                    NavigationLink {
                         CCAAComparatorView(user: user)
                     } label: {
                         Label("Comparador CCAA", systemImage: "chart.bar.doc.horizontal")
@@ -161,6 +167,12 @@ struct SettingsView: View {
                         AnnualProjectionView(user: user)
                     } label: {
                         Label("Proyección Anual", systemImage: "calendar.badge.clock")
+                    }
+                    
+                    NavigationLink {
+                        ExportPDFView(user: user)
+                    } label: {
+                        Label("Exportar PDF", systemImage: "doc.text.fill")
                     }
                 }
                 
@@ -193,7 +205,7 @@ struct SettingsView: View {
                     HStack {
                         Text("Versión")
                         Spacer()
-                        Text("1.4.0")
+                        Text("1.5.0")
                             .foregroundStyle(.secondary)
                     }
                 } footer: {

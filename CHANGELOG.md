@@ -6,6 +6,55 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 
 ---
 
+## [1.5.0] - 2024-12-18
+
+### 📅 Calendario Visual
+
+- **Nueva pestaña Calendario** - Vista mensual interactiva con todas las guardias
+- **Indicadores de color** - Código de colores por tipo de guardia (laborable, festivo, noche)
+- **Detalle del día** - Ver guardias y añadir nuevas tocando en cualquier fecha
+- **Navegación mensual** - Botones para moverse entre meses
+
+### 🔔 Recordatorios de Guardias
+
+- **Notificación día antes** - Recordatorio automático a las 20:00 del día anterior
+- **Toggle en añadir guardia** - Activar/desactivar recordatorio al crear guardia
+- **Cancelación automática** - Se eliminan recordatorios al borrar guardias
+
+### ⚡ Plantillas de Guardia
+
+- **Guardias frecuentes** - Crea plantillas con tipo, horas y hospital
+- **Acceso rápido** - Chips de plantillas en vista de añadir guardia
+- **Gestión en Ajustes** - Crear, editar y eliminar plantillas
+
+### 📄 Exportar PDF
+
+- **Informe de guardias** - Genera PDF con listado completo
+- **Selección de periodo** - Este mes, mes anterior, año o todo
+- **Compartir fácilmente** - Integración con ShareSheet de iOS
+- **Ideal para IRPF** - Útil para declaración de la renta
+
+### 📱 Widget de iOS (Código preparado)
+
+- **Widget pequeño** - Neto mensual de un vistazo
+- **Widget mediano** - Neto + horas guardia + bruto
+- **Widget grande** - Desglose completo con próxima guardia
+- **Actualización automática** - Se refresca cada hora
+
+> ⚠️ El widget requiere configurar App Groups e iconset en Xcode manualmente
+
+### 🔧 Técnico
+
+- Nuevo modelo `PlantillaGuardia` para plantillas de guardias
+- `NotificationService` unificado (renombrado de `IRPFNotificationService`)
+- `PDFExportService` para generación de informes PDF
+- `WidgetDataManager` para compartir datos con el widget
+- Campos `recordatorioActivo` y `recordatorioId` en modelo `Guardia`
+- Nueva vista `CalendarView` con calendario personalizado
+- Nuevas vistas: `PlantillasView`, `ExportPDFView`
+
+---
+
 ## [1.4.0] - 2024-12-18
 
 ### 📊 Gestión de IRPF

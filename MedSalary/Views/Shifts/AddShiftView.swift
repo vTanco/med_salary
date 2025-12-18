@@ -3,6 +3,7 @@ import SwiftData
 
 struct AddShiftView: View {
     @Environment(\.modelContext) private var modelContext
+    @Query private var allPlantillas: [PlantillaGuardia]
     
     let user: User
     let onSaved: () -> Void
@@ -17,6 +18,10 @@ struct AddShiftView: View {
     @State private var recordatorioActivo = true
     
     private let horasOptions = [6, 8, 10, 12, 14, 16, 17, 24]
+    
+    private var plantillas: [PlantillaGuardia] {
+        allPlantillas.filter { $0.userId == user.id }
+    }
     
     var body: some View {
         NavigationStack {
@@ -33,6 +38,47 @@ struct AddShiftView: View {
                             .fontWeight(.bold)
                     }
                     .padding(.top, 20)
+                    
+                    // Quick Templates
+                    if !plantillas.isEmpty {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Label("Plantillas rápidas", systemImage: "bolt.fill")
+                                .font(.headline)
+                                .foregroundStyle(.secondary)
+                            
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 12) {
+                                    ForEach(plantillas, id: \.id) { plantilla in
+                                        Button {
+                                            aplicarPlantilla(plantilla)
+                                        } label: {
+                                            VStack(alignment: .leading, spacing: 4) {
+                                                HStack {
+                                                    Image(systemName: plantilla.tipo.icon)
+                                                        .font(.caption)
+                                                    Text(plantilla.nombre)
+                                                        .font(.caption)
+                                                        .fontWeight(.medium)
+                                                }
+                                                Text("\(plantilla.horas)h")
+                                                    .font(.caption2)
+                                                    .foregroundStyle(.secondary)
+                                            }
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 8)
+                                            .background(Color(.systemGray6))
+                                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                            }
+                        }
+                        .padding()
+                        .background(Color(.systemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .shadow(color: .black.opacity(0.05), radius: 5)
+                    }
                     
                     // Date Picker
                     VStack(alignment: .leading, spacing: 8) {
@@ -264,6 +310,15 @@ struct AddShiftView: View {
     private func triggerHaptic(_ style: UIImpactFeedbackGenerator.FeedbackStyle) {
         let generator = UIImpactFeedbackGenerator(style: style)
         generator.impactOccurred()
+    }
+    
+    private func aplicarPlantilla(_ plantilla: PlantillaGuardia) {
+        withAnimation(.spring(response: 0.3)) {
+            tipoGuardia = plantilla.tipo
+            horas = plantilla.horas
+            hospital = plantilla.hospital ?? ""
+        }
+        triggerHaptic(.medium)
     }
 }
 

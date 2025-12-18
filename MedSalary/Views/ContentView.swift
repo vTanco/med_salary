@@ -76,31 +76,37 @@ struct MainTabView: View {
                 }
                 .tag(0)
             
+            CalendarView(user: user)
+                .tabItem {
+                    Label("Calendario", systemImage: "calendar")
+                }
+                .tag(1)
+            
             AddShiftView(user: user) {
                 selectedTab = 0
             }
                 .tabItem {
                     Label("Añadir", systemImage: "plus.circle.fill")
                 }
-                .tag(1)
+                .tag(2)
             
             HistoryView(user: user)
                 .tabItem {
                     Label("Historial", systemImage: "clock.fill")
                 }
-                .tag(2)
+                .tag(3)
             
             ChartsView(user: user)
                 .tabItem {
                     Label("Gráficas", systemImage: "chart.bar.fill")
                 }
-                .tag(3)
+                .tag(4)
             
             SettingsView(user: user, onLogout: onLogout)
                 .tabItem {
                     Label("Ajustes", systemImage: "gearshape.fill")
                 }
-                .tag(4)
+                .tag(5)
         }
         .tint(.teal)
     }

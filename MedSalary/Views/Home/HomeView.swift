@@ -325,6 +325,16 @@ struct HomeView: View {
                 irpfActualUsuario: perfil.irpfActualPorcentaje,
                 ingresoAdicionalAnual: ingresoAdicionalAnual
             )
+            
+            // Update widget data
+            if let irpfData = irpf {
+                WidgetDataManager.shared.updateFromUser(
+                    user: user,
+                    netoMensual: irpfData.netoMensualEstimado,
+                    brutoGuardias: salario.brutoGuardias,
+                    totalHorasMes: totalHoras
+                )
+            }
         }
     }
     
