@@ -3,14 +3,23 @@ import SwiftData
 
 struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
+    @Query private var allFuentes: [FuenteIngreso]
     
     let user: User
     
     @State private var salario: ResultadoSalario?
     @State private var irpf: ResultadoIRPF?
+    @State private var comparacionIRPF: ComparacionIRPF?
     
     private var perfil: PerfilUsuario? {
         user.perfil
+    }
+    
+    private var ingresoAdicionalAnual: Double {
+        guard let perfilId = perfil?.id else { return 0 }
+        return allFuentes
+            .filter { $0.perfilId == perfilId }
+            .reduce(0) { $0 + $1.importeAnual }
     }
     
     private var guardiasMes: [Guardia] {
@@ -47,6 +56,8 @@ struct HomeView: View {
         guardiasMes.reduce(0) { $0 + $1.horas }
     }
     
+    @State private var showIRPFConfig = false
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -62,6 +73,18 @@ struct HomeView: View {
                     
                     // Breakdown Card
                     breakdownCard
+                    
+                    // IRPF KPI Card
+                    if let comparacion = comparacionIRPF, let perfil = perfil {
+                        IRPFKPICard(comparacion: comparacion) {
+                            showIRPFConfig = true
+                        }
+                        .sheet(isPresented: $showIRPFConfig) {
+                            NavigationStack {
+                                IRPFConfigView(perfil: perfil)
+                            }
+                        }
+                    }
                 }
                 .padding()
             }
@@ -193,9 +216,9 @@ struct HomeView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
-            .background(.white)
+            .background(Color(.secondarySystemGroupedBackground))
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            .shadow(color: .black.opacity(0.05), radius: 5)
+            .shadow(color: .primary.opacity(0.05), radius: 5)
             
             // Bruto Guardias
             VStack(alignment: .leading, spacing: 8) {
@@ -218,9 +241,9 @@ struct HomeView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
-            .background(.white)
+            .background(Color(.secondarySystemGroupedBackground))
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            .shadow(color: .black.opacity(0.05), radius: 5)
+            .shadow(color: .primary.opacity(0.05), radius: 5)
         }
     }
     
@@ -268,9 +291,9 @@ struct HomeView: View {
             }
         }
         .padding()
-        .background(.white)
+        .background(Color(.secondarySystemGroupedBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.05), radius: 5)
+        .shadow(color: .primary.opacity(0.05), radius: 5)
     }
     
     // MARK: - Helpers
@@ -287,10 +310,20 @@ struct HomeView: View {
         )
         
         if let salario = salario {
-            irpf = IRPFEngine.calcularIRPF(
+            // Calcular IRPF incluyendo fuentes adicionales
+            irpf = IRPFEngine.calcularIRPFConFuentesAdicionales(
                 brutoAnualEstimado: salario.brutoTotalAnualEstimado,
                 brutoMensualActual: salario.brutoTotalMensual,
-                estadoFamiliar: perfil.estadoFamiliar
+                estadoFamiliar: perfil.estadoFamiliar,
+                ingresoAdicionalAnual: ingresoAdicionalAnual
+            )
+            
+            // Calcular comparación IRPF
+            comparacionIRPF = IRPFEngine.compararIRPF(
+                brutoAnualTotal: salario.brutoTotalAnualEstimado,
+                estadoFamiliar: perfil.estadoFamiliar,
+                irpfActualUsuario: perfil.irpfActualPorcentaje,
+                ingresoAdicionalAnual: ingresoAdicionalAnual
             )
         }
     }

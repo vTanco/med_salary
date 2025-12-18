@@ -155,6 +155,9 @@ struct HistoryView: View {
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)
         
+        // Cancel reminder notification if exists
+        NotificationService.shared.cancelShiftReminder(for: guardia)
+        
         // Remove from user's guardias array
         user.guardias?.removeAll { $0.id == guardia.id }
         

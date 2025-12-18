@@ -14,6 +14,7 @@ struct AddShiftView: View {
     @State private var hospital: String = ""
     @State private var showConfirmation = false
     @State private var showDuplicateWarning = false
+    @State private var recordatorioActivo = true
     
     private let horasOptions = [6, 8, 10, 12, 14, 16, 17, 24]
     
@@ -148,6 +149,26 @@ struct AddShiftView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .shadow(color: .black.opacity(0.05), radius: 5)
                     
+                    // Recordatorio
+                    VStack(alignment: .leading, spacing: 8) {
+                        Toggle(isOn: $recordatorioActivo) {
+                            Label("Recordar día antes", systemImage: "bell.fill")
+                                .font(.headline)
+                                .foregroundStyle(.primary)
+                        }
+                        .tint(.teal)
+                        
+                        if recordatorioActivo {
+                            Text("Recibirás una notificación a las 20:00 del día anterior")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding()
+                    .background(Color(.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .shadow(color: .black.opacity(0.05), radius: 5)
+                    
                     // Save Button
                     Button(action: attemptSave) {
                         HStack {
@@ -203,6 +224,7 @@ struct AddShiftView: View {
             horas: horas,
             notas: notas.isEmpty ? nil : notas,
             hospital: hospital.isEmpty ? nil : hospital,
+            recordatorioActivo: recordatorioActivo,
             user: user
         )
         
@@ -213,6 +235,16 @@ struct AddShiftView: View {
             user.guardias = []
         }
         user.guardias?.append(guardia)
+        
+        // Schedule reminder if enabled
+        if recordatorioActivo {
+            Task {
+                if let notificationId = await NotificationService.shared.scheduleShiftReminder(for: guardia) {
+                    guardia.recordatorioId = notificationId
+                    try? modelContext.save()
+                }
+            }
+        }
         
         do {
             try modelContext.save()

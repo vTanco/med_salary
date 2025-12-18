@@ -3,6 +3,7 @@ import SwiftData
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
+    @Query private var allFuentes: [FuenteIngreso]
     
     let user: User
     let onLogout: () -> Void
@@ -12,6 +13,11 @@ struct SettingsView: View {
     
     private var perfil: PerfilUsuario? {
         user.perfil
+    }
+    
+    private var fuentesCount: Int {
+        guard let perfilId = perfil?.id else { return 0 }
+        return allFuentes.filter { $0.perfilId == perfilId }.count
     }
     
     var body: some View {
@@ -83,6 +89,47 @@ struct SettingsView: View {
                             }
                         }
                     }
+                    
+                    // IRPF Section
+                    Section("IRPF y Fiscalidad") {
+                        NavigationLink {
+                            IRPFConfigView(perfil: perfil)
+                        } label: {
+                            HStack {
+                                Label("Mi % IRPF", systemImage: "percent")
+                                Spacer()
+                                if let irpf = perfil.irpfActualPorcentaje {
+                                    Text("\(Int(irpf * 100))%")
+                                        .foregroundStyle(.secondary)
+                                } else {
+                                    Text("No configurado")
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                        
+                        NavigationLink {
+                            FuentesIngresoView(perfil: perfil)
+                        } label: {
+                            HStack {
+                                Label("Fuentes de Ingreso", systemImage: "plus.circle")
+                                Spacer()
+                                if fuentesCount > 0 {
+                                    Text("\(fuentesCount)")
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Mis Parámetros Section
+                    Section("Mis Parámetros") {
+                        NavigationLink {
+                            MisSalariosView(perfil: perfil)
+                        } label: {
+                            Label("Ver Sueldo Base y Complementos", systemImage: "doc.text.magnifyingglass")
+                        }
+                    }
                 }
                 
                 // Stats Section
@@ -117,6 +164,15 @@ struct SettingsView: View {
                     }
                 }
                 
+                // Help Section
+                Section("Ayuda") {
+                    NavigationLink {
+                        ReportarErrorView(user: user)
+                    } label: {
+                        Label("Reportar Error en Cifras", systemImage: "exclamationmark.triangle")
+                    }
+                }
+                
                 // Danger Zone
                 Section {
                     Button(role: .destructive) {
@@ -137,7 +193,7 @@ struct SettingsView: View {
                     HStack {
                         Text("Versión")
                         Spacer()
-                        Text("1.0.0")
+                        Text("1.4.0")
                             .foregroundStyle(.secondary)
                     }
                 } footer: {

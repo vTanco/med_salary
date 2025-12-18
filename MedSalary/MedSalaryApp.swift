@@ -8,6 +8,9 @@ struct MedSalaryApp: App {
             User.self,
             Guardia.self,
             PerfilUsuario.self,
+            FuenteIngreso.self,
+            ReporteError.self,
+            PlantillaGuardia.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -19,6 +22,11 @@ struct MedSalaryApp: App {
     }()
     
     init() {
+        // Request notification permissions
+        Task {
+            _ = await IRPFNotificationService.shared.requestPermission()
+        }
+        
         // Seed demo user on first launch
         seedDemoUserIfNeeded()
     }
@@ -56,6 +64,7 @@ struct MedSalaryApp: App {
                     user: demoUser
                 )
                 perfil.onboardingCompleto = true
+                perfil.irpfActualPorcentaje = 0.15 // 15% por defecto
                 demoUser.perfil = perfil
                 
                 context.insert(demoUser)

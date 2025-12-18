@@ -23,6 +23,9 @@ final class PerfilUsuario {
     var precioGuardiaFestivo: Double?
     var precioGuardiaNoche: Double?
     
+    // IRPF actual del usuario
+    var irpfActualPorcentaje: Double?  // Porcentaje actual configurado por el usuario (ej: 0.15 = 15%)
+    
     var user: User?
     
     var ccaa: ComunidadAutonoma {

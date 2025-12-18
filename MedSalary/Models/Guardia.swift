@@ -9,6 +9,8 @@ final class Guardia {
     var horas: Int
     var notas: String?
     var hospital: String?
+    var recordatorioActivo: Bool
+    var recordatorioId: String?
     
     var user: User?
     
@@ -17,13 +19,15 @@ final class Guardia {
         set { tipoRaw = newValue.rawValue }
     }
     
-    init(fecha: Date, tipo: TipoGuardia, horas: Int, notas: String? = nil, hospital: String? = nil, user: User? = nil) {
+    init(fecha: Date, tipo: TipoGuardia, horas: Int, notas: String? = nil, hospital: String? = nil, recordatorioActivo: Bool = false, user: User? = nil) {
         self.id = UUID()
         self.fecha = fecha
         self.tipoRaw = tipo.rawValue
         self.horas = horas
         self.notas = notas
         self.hospital = hospital
+        self.recordatorioActivo = recordatorioActivo
+        self.recordatorioId = nil
         self.user = user
     }
     

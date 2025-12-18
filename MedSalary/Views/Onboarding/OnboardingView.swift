@@ -11,15 +11,18 @@ struct OnboardingView: View {
     @State private var selectedCCAA: ComunidadAutonoma = .madrid
     @State private var selectedCategoria: CategoriaId = .mir1
     @State private var selectedEstadoFamiliar: EstadoFamiliar = .general
+    @State private var irpfActual: Double = 15.0
+    @State private var fuentesIngreso: [TempFuenteIngreso] = []
+    @State private var showAddFuente = false
     
-    private let totalSteps = 3 // CCAA, Categoria, Familiar
+    private let totalSteps = 5 // CCAA, Categoria, Familiar, IRPF, Fuentes
     
     var body: some View {
         NavigationStack {
             VStack(spacing: 24) {
                 // Progress
                 HStack(spacing: 8) {
-                    ForEach(0..<3, id: \.self) { step in
+                    ForEach(0..<totalSteps, id: \.self) { step in
                         Capsule()
                             .fill(step <= currentStep ? Color.teal : Color.gray.opacity(0.3))
                             .frame(height: 4)
@@ -38,6 +41,10 @@ struct OnboardingView: View {
                     stepCategoria
                 case 2:
                     stepFamiliar
+                case 3:
+                    stepIRPF
+                case 4:
+                    stepFuentesIngreso
                 default:
                     EmptyView()
                 }
@@ -86,6 +93,11 @@ struct OnboardingView: View {
             }
             .navigationTitle("Configuración Inicial")
             .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: $showAddFuente) {
+                AddFuenteIngresoSheet(onAdd: { nombre, importe in
+                    fuentesIngreso.append(TempFuenteIngreso(nombre: nombre, importeAnual: importe))
+                })
+            }
         }
     }
     
@@ -185,6 +197,127 @@ struct OnboardingView: View {
         .padding(.horizontal, 24)
     }
     
+    private var stepIRPF: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "percent")
+                .font(.system(size: 50))
+                .foregroundStyle(.teal)
+            
+            Text("¿Qué porcentaje de IRPF tienes puesto?")
+                .font(.title2)
+                .fontWeight(.semibold)
+                .multilineTextAlignment(.center)
+            
+            Text("Lo encontrarás en tu nómina actual")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            
+            VStack(spacing: 8) {
+                Text("\(Int(irpfActual))%")
+                    .font(.system(size: 60, weight: .bold))
+                    .foregroundStyle(.teal)
+                
+                Slider(value: $irpfActual, in: 0...47, step: 1)
+                    .tint(.teal)
+                    .padding(.horizontal, 20)
+                
+                HStack {
+                    Text("0%")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Text("47%")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.horizontal, 20)
+            }
+            .padding(.top, 24)
+            
+            Text("Esto nos permitirá compararlo con el IRPF óptimo")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.top, 8)
+        }
+        .padding(.horizontal, 24)
+    }
+    
+    private var stepFuentesIngreso: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "plus.circle.fill")
+                .font(.system(size: 50))
+                .foregroundStyle(.teal)
+            
+            Text("¿Tienes otras fuentes de ingreso?")
+                .font(.title2)
+                .fontWeight(.semibold)
+                .multilineTextAlignment(.center)
+            
+            Text("Consultas privadas, docencia, guardias en privado...")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+            
+            if fuentesIngreso.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "tray")
+                        .font(.system(size: 40))
+                        .foregroundStyle(.gray.opacity(0.5))
+                    
+                    Text("No has añadido ninguna fuente adicional")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    
+                    Text("Esto es opcional, puedes añadirlas después")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.vertical, 24)
+            } else {
+                ScrollView {
+                    VStack(spacing: 8) {
+                        ForEach(fuentesIngreso) { fuente in
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text(fuente.nombre)
+                                        .fontWeight(.medium)
+                                    Text("\(Int(fuente.importeAnual))€/año")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Button {
+                                    fuentesIngreso.removeAll { $0.id == fuente.id }
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundStyle(.red.opacity(0.7))
+                                }
+                            }
+                            .padding()
+                            .background(Color.gray.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
+                    }
+                }
+                .frame(maxHeight: 150)
+            }
+            
+            Button {
+                showAddFuente = true
+            } label: {
+                Label("Añadir fuente de ingreso", systemImage: "plus")
+                    .fontWeight(.medium)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.teal.opacity(0.1))
+                    .foregroundStyle(.teal)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+        }
+        .padding(.horizontal, 24)
+    }
+    
     // MARK: - Actions
     
     private func completeOnboarding() {
@@ -200,9 +333,20 @@ struct OnboardingView: View {
             user: user
         )
         perfil.onboardingCompleto = true
+        perfil.irpfActualPorcentaje = irpfActual / 100.0 // Convertir a decimal
         
         modelContext.insert(perfil)
         user.perfil = perfil
+        
+        // Crear fuentes de ingreso
+        for tempFuente in fuentesIngreso {
+            let fuente = FuenteIngreso(
+                nombre: tempFuente.nombre,
+                importeAnual: tempFuente.importeAnual,
+                perfilId: perfil.id
+            )
+            modelContext.insert(fuente)
+        }
         
         do {
             try modelContext.save()
@@ -214,12 +358,73 @@ struct OnboardingView: View {
     }
 }
 
+// MARK: - Temporary Model for Onboarding
+struct TempFuenteIngreso: Identifiable {
+    let id = UUID()
+    let nombre: String
+    let importeAnual: Double
+}
+
+// MARK: - Add Fuente Sheet
+struct AddFuenteIngresoSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    
+    let onAdd: (String, Double) -> Void
+    
+    @State private var nombre = ""
+    @State private var importe = ""
+    
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Detalles") {
+                    TextField("Nombre (ej: Consulta privada)", text: $nombre)
+                    
+                    HStack {
+                        TextField("Importe anual bruto", text: $importe)
+                            .keyboardType(.numberPad)
+                        Text("€/año")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                
+                Section {
+                    Text("Añade aquí ingresos adicionales como consultas privadas, docencia, guardias en hospitales privados, etc.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .navigationTitle("Nueva Fuente")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancelar") {
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Añadir") {
+                        if let importeDouble = Double(importe), !nombre.isEmpty {
+                            onAdd(nombre, importeDouble)
+                            dismiss()
+                        }
+                    }
+                    .fontWeight(.semibold)
+                    .disabled(nombre.isEmpty || Double(importe) == nil)
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+}
+
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: User.self, PerfilUsuario.self, configurations: config)
+    let container = try! ModelContainer(for: User.self, PerfilUsuario.self, FuenteIngreso.self, configurations: config)
     let user = User(email: "test@test.com", name: "Test", password: "1234")
     container.mainContext.insert(user)
     
     return OnboardingView(user: user) { }
         .modelContainer(container)
 }
+
